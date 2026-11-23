@@ -25,7 +25,8 @@ RATE = 25.0
 
 def valid(angles, lo, hi):
     """True if there are 6 finite angles, each within its joint limits."""
-    return len(angles) == len(NAMES) and all(
+    # all three lengths: zip() would silently skip joints if a limit list were short
+    return len(angles) == len(lo) == len(hi) == len(NAMES) and all(
         math.isfinite(a) and low <= a <= high for a, low, high in zip(angles, lo, hi)
     )
 

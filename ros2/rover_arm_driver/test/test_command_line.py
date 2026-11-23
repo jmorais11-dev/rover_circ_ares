@@ -26,6 +26,9 @@ def test_valid_rejects_bad_input():
     assert not valid([90] * 5 + [-1], LO, HI)
     assert not valid([90] * 5 + [float("nan")], LO, HI)
     assert not valid([90, 10, 90, 145, 90, 90], LO, [180, 9] + HI[2:])  # per-joint limit
+    # a 5-entry limit list must not leave the gripper unchecked
+    assert not valid(HOME, LO, HI[:5])
+    assert not valid(HOME, LO[:5], HI)
 
 
 def test_step_towards_limits_each_joint_and_lands_exactly():
