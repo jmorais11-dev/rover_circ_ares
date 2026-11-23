@@ -69,7 +69,7 @@ only (flake8, pep257, clang-format).
 ## Real rover: read before powering the motors
 
 The real-rover path is **not ready for unattended use**. The
-[readiness audit](https://blazemorales.github.io/rover_circ_ares/auditoria-prontidao/)
+[readiness audit](https://jmorais11-dev.github.io/rover_circ_ares/auditoria-prontidao/)
 lists the gaps; the most important ones live in this folder:
 
 - `controller_node` has no command timeout and does not stop the motors on
@@ -81,7 +81,7 @@ lists the gaps; the most important ones live in this folder:
 
 Until those are fixed: test with the **wheels lifted** and someone on the
 **physical kill switch**. Open questions about the hardware are in issue
-[#32](https://github.com/Blazemorales/rover_circ_ares/issues/32).
+[#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32).
 
 ## Adding a package
 

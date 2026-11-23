@@ -1,10 +1,10 @@
 # rover_circ_ares
 
-[![Docker Build](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/docker-build.yml/badge.svg)](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/docker-build.yml)
-[![Tests](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/tests.yml/badge.svg)](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/tests.yml)
-[![Python format](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/python-formatter.yml/badge.svg)](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/python-formatter.yml)
-[![C++ format](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/cpp-formatter.yml/badge.svg)](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/cpp-formatter.yml)
-[![Docs](https://github.com/Blazemorales/rover_circ_ares/actions/workflows/hugo-docs-deployment.yml/badge.svg)](https://blazemorales.github.io/rover_circ_ares/)
+[![Docker Build](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/docker-build.yml/badge.svg)](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/docker-build.yml)
+[![Tests](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/tests.yml/badge.svg)](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/tests.yml)
+[![Python format](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/python-formatter.yml/badge.svg)](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/python-formatter.yml)
+[![C++ format](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/cpp-formatter.yml/badge.svg)](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/cpp-formatter.yml)
+[![Docs](https://github.com/jmorais11-dev/rover_circ_ares/actions/workflows/hugo-docs-deployment.yml/badge.svg)](https://jmorais11-dev.github.io/rover_circ_ares/)
 
 [English](README.md) · **Português**
 
@@ -15,9 +15,9 @@ autônoma e Nav2 ajustado para terreno irregular, e aceita missões em linguagem
 natural por MCP e por um chat web.
 
 - ROS 2 Jazzy · Gazebo Harmonic · Nav2 · slam_toolbox · explore_lite · rosbridge
-- Site da documentação: <https://blazemorales.github.io/rover_circ_ares/>
-- O que ainda falta para o CIRC: [checklist de requisitos](https://blazemorales.github.io/rover_circ_ares/requisitos-circ/)
-  e a issue de acompanhamento [#26](https://github.com/Blazemorales/rover_circ_ares/issues/26)
+- Site da documentação: <https://jmorais11-dev.github.io/rover_circ_ares/>
+- O que ainda falta para o CIRC: [checklist de requisitos](https://jmorais11-dev.github.io/rover_circ_ares/requisitos-circ/)
+  e a issue de acompanhamento [#26](https://github.com/jmorais11-dev/rover_circ_ares/issues/26)
 
 <div align="center">
   <img src="docs/images/rover.png" width="60%"/>
@@ -29,12 +29,12 @@ natural por MCP e por um chat web.
 |---|---|
 | O que o rover faz e como o software se encaixa | [Arquitetura](#arquitetura), logo abaixo |
 | Como compilar e rodar a partir de uma máquina limpa | [Comandos essenciais](#comandos-essenciais) (só Docker, nada mais no host) |
-| Prova de que compila e de que os testes de segurança passam | [Actions](https://github.com/Blazemorales/rover_circ_ares/actions): build do Docker, testes, formatação |
+| Prova de que compila e de que os testes de segurança passam | [Actions](https://github.com/jmorais11-dev/rover_circ_ares/actions): build do Docker, testes, formatação |
 | Código-fonte ROS 2 | [`ros2/`](ros2/), um pacote colcon por função (tabela abaixo) |
 | Ajustes da navegação autônoma | [`ros2/rover_navigation/params/`](ros2/rover_navigation/params/), [`behavior_trees/`](ros2/rover_navigation/behavior_trees/) |
-| Missões em linguagem natural (LLM) e a camada de segurança | [`tools/`](tools/) e a [página ROS-MCP](https://blazemorales.github.io/rover_circ_ares/ros-mcp/) |
-| Diário de engenharia: decisões, bugs, medições | [Diário de Bordo](https://blazemorales.github.io/rover_circ_ares/diario-de-bordo/) |
-| Situação frente às regras da CIRC | [Checklist de requisitos CIRC](https://blazemorales.github.io/rover_circ_ares/requisitos-circ/) |
+| Missões em linguagem natural (LLM) e a camada de segurança | [`tools/`](tools/) e a [página ROS-MCP](https://jmorais11-dev.github.io/rover_circ_ares/ros-mcp/) |
+| Diário de engenharia: decisões, bugs, medições | [Diário de Bordo](https://jmorais11-dev.github.io/rover_circ_ares/diario-de-bordo/) |
+| Situação frente às regras da CIRC | [Checklist de requisitos CIRC](https://jmorais11-dev.github.io/rover_circ_ares/requisitos-circ/) |
 
 ## Arquitetura
 
@@ -93,7 +93,7 @@ flowchart LR
 | `ros2/explore_lite(_msgs)` | Exploração de fronteiras (cópia vendorizada) |
 | `ros2/rover_service` | Serviço systemd que sobe o rover real no boot |
 | `tools/` | Proxy MCP (`rover_mcp_safe`), chat web (`rover_web`), medidor de RTF |
-| `docs/site/` | Site da documentação (Hugo), publicado em <https://blazemorales.github.io/rover_circ_ares/> |
+| `docs/site/` | Site da documentação (Hugo), publicado em <https://jmorais11-dev.github.io/rover_circ_ares/> |
 | `docs/images/` | Imagens usadas nos READMEs |
 | `.github/workflows/` | CI: build do Docker, testes offline, formatação, deploy do site e da API |
 | `Dockerfile`, `.devcontainer/` | Ambiente reproduzível (ROS 2 Jazzy + Gazebo Harmonic) |
@@ -107,7 +107,7 @@ com o repositório montado como fonte do workspace.
 ### 1. Criar a imagem e o container
 
 ```bash
-git clone https://github.com/Blazemorales/rover_circ_ares.git
+git clone https://github.com/jmorais11-dev/rover_circ_ares.git
 cd rover_circ_ares                   # raiz do repositório (onde está o Dockerfile)
 docker build -t rover:latest .
 
@@ -223,14 +223,14 @@ Nav2 por um proxy MCP restrito (o `/cmd_vel` é bloqueado), num chat local
 (Ollama + `ollmcp`) ou numa página web (Render + Groq, plano grátis).
 Passo a passo:
 
-- [ROS-MCP](https://blazemorales.github.io/rover_circ_ares/ros-mcp/): proxy, tools e testes locais
-- [Chat Web](https://blazemorales.github.io/rover_circ_ares/chat-web/): chat web e missões em sequência (`run_mission`)
-- [Desempenho da simulação](https://blazemorales.github.io/rover_circ_ares/desempenho-simulacao/): `sim_lite` e medidas de RTF
+- [ROS-MCP](https://jmorais11-dev.github.io/rover_circ_ares/ros-mcp/): proxy, tools e testes locais
+- [Chat Web](https://jmorais11-dev.github.io/rover_circ_ares/chat-web/): chat web e missões em sequência (`run_mission`)
+- [Desempenho da simulação](https://jmorais11-dev.github.io/rover_circ_ares/desempenho-simulacao/): `sim_lite` e medidas de RTF
 
 ## Dev Container (VS Code)
 
 A pasta `.devcontainer/` prepara ROS 2 Jazzy, Gazebo e RViz2 com X11. Guia:
-[Dev Container](https://blazemorales.github.io/rover_circ_ares/dev-container/).
+[Dev Container](https://jmorais11-dev.github.io/rover_circ_ares/dev-container/).
 
 ## Créditos e citação
 

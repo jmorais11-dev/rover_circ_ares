@@ -62,7 +62,7 @@ preloader = "" # use jpg, png, svg or gif format.
 [navigation_button]
 enable = true
 label = "Github"
-link = "https://github.com/Blazemorales/rover_circ_ares"
+link = "https://github.com/jmorais11-dev/rover_circ_ares"
 
 # LLMs Configuration
 # LLMs module: https://github.com/gethugothemes/hugo-modules/tree/master/llms-txt

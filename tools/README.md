@@ -11,9 +11,9 @@ the host (or on Render), talking to the simulation through rosbridge
 | [`rover_web/`](rover_web/) | Web chat: `server.py` (page + LLM, deployed on Render via [`render.yaml`](../render.yaml)) and `agent.py` (runs on the PC next to the simulation and dials out to the server, so no port is exposed). |
 | [`rtf_meter.py`](rtf_meter.py) | Measures the Gazebo real-time factor (RTF) from `/clock`. Runs inside the container. |
 
-Full documentation (Portuguese): [ROS-MCP](https://blazemorales.github.io/rover_circ_ares/ros-mcp/),
-[Chat Web](https://blazemorales.github.io/rover_circ_ares/chat-web/),
-[Simulation performance](https://blazemorales.github.io/rover_circ_ares/desempenho-simulacao/).
+Full documentation (Portuguese): [ROS-MCP](https://jmorais11-dev.github.io/rover_circ_ares/ros-mcp/),
+[Chat Web](https://jmorais11-dev.github.io/rover_circ_ares/chat-web/),
+[Simulation performance](https://jmorais11-dev.github.io/rover_circ_ares/desempenho-simulacao/).
 
 ## Setup (host)
 

@@ -1,6 +1,6 @@
 ######################## default configuration ####################
 # The base URL of your site (required). This will be prepended to all relative URLs.
-baseURL = "https://blazemorales.github.io/rover_circ_ares/"
+baseURL = "https://jmorais11-dev.github.io/rover_circ_ares/"
 # Title of your website (required).
 title = "ROS2 Rover"
 # Your theme name

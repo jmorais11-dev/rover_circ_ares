@@ -4,7 +4,7 @@ title: "rover_circ_ares"
 abstract: "ROS 2 software for the ARES team's planetary rover at the Canadian International Rover Challenge (CIRC): Gazebo simulation, SLAM, Nav2 for uneven terrain and natural-language missions through MCP."
 authors:
   - name: "Equipe ARES"
-url: "https://github.com/Blazemorales/rover_circ_ares"
+url: "https://github.com/jmorais11-dev/rover_circ_ares"
 license: MIT
 references:
   - type: software
