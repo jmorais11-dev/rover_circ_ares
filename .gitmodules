@@ -1,3 +1,0 @@
-[submodule "rover_arm"]
-	path = rover_arm
-	url = https://github.com/ruali-dev/vision-arm-grasp.git

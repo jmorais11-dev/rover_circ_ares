@@ -14,5 +14,5 @@ jobs:
         with:
           clangFormatVersion: 14
           source: "."
-          # vendored third-party package: keep it byte-identical to upstream
-          exclude: "./ros2/explore_lite"
+          # vendored third-party code: keep it byte-identical to upstream
+          exclude: "./ros2/explore_lite ./rover_arm"
