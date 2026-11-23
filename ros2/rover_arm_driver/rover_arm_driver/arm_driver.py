@@ -5,6 +5,7 @@ base, shoulder, elbow, gripper roll (145 = centred), wrist, gripper (0 closed, 1
 The firmware jumps straight to whatever it receives, so this node ramps towards the
 target at max_speed deg/s. /estop true freezes the arm where it is; on exit it parks at HOME.
 """
+
 import json
 import math
 import time
@@ -16,26 +17,34 @@ import serial
 from std_msgs.msg import Bool, Float64MultiArray
 
 NAMES = ["servo1", "servo2", "servo3", "servo4", "servo5", "servo6"]
-HOME = [90.0, 90.0, 90.0, 145.0, 90.0, 90.0]  # firmware power-on pose; the UNO resets to it on port open
-RATE = 25.0  # Hz; a ~75-byte line every 40 ms is well within 115200 baud and the UNO's 64-byte RX buffer
+# firmware power-on pose; the UNO resets to it on port open
+HOME = [90.0, 90.0, 90.0, 145.0, 90.0, 90.0]
+# Hz; a ~75-byte line every 40 ms fits 115200 baud and the UNO's 64-byte RX buffer
+RATE = 25.0
 
 
 def valid(angles, lo, hi):
     """True if there are 6 finite angles, each within its joint limits."""
     return len(angles) == len(NAMES) and all(
-        math.isfinite(a) and low <= a <= high for a, low, high in zip(angles, lo, hi))
+        math.isfinite(a) and low <= a <= high for a, low, high in zip(angles, lo, hi)
+    )
 
 
 def step_towards(current, target, max_step):
     """Move each joint at most max_step degrees towards its target."""
     # land on t exactly (c + (t - c) can miss by an ulp and park() would never end)
-    return [t if abs(t - c) <= max_step else c + math.copysign(max_step, t - c)
-            for c, t in zip(current, target)]
+    return [
+        t if abs(t - c) <= max_step else c + math.copysign(max_step, t - c)
+        for c, t in zip(current, target)
+    ]
 
 
 def command_line(angles):
     """Firmware JSON line; always all six keys, the firmware drives a missing key to 0 deg."""
-    return json.dumps({n: round(a) for n, a in zip(NAMES, angles)}, separators=(",", ":")) + "\n"
+    return (
+        json.dumps({n: round(a) for n, a in zip(NAMES, angles)}, separators=(",", ":"))
+        + "\n"
+    )
 
 
 class ArmDriver(Node):
@@ -48,9 +57,12 @@ class ArmDriver(Node):
         self.lo = list(self.declare_parameter("min_angles", [0.0] * 6).value)
         self.hi = list(self.declare_parameter("max_angles", [180.0] * 6).value)
         if not (self.max_step > 0 and valid(HOME, self.lo, self.hi)):
-            raise ValueError(f"need max_speed > 0 and 6 min/max angles containing HOME {HOME}")
+            raise ValueError(
+                f"need max_speed > 0 and 6 min/max angles containing HOME {HOME}"
+            )
         self.ser = serial.Serial(port, baud, timeout=1)
-        time.sleep(2.0)  # opening the port resets the UNO; its bootloader drops bytes meanwhile
+        # opening the port resets the UNO; its bootloader drops bytes meanwhile
+        time.sleep(2.0)
         self.current = list(HOME)
         self.target = list(HOME)
         self.last_line = command_line(HOME)
@@ -58,19 +70,26 @@ class ArmDriver(Node):
         self.create_subscription(Bool, "estop", self.on_estop, 10)
         self.create_subscription(Float64MultiArray, "arm/command", self.on_command, 10)
         self.create_timer(1.0 / RATE, self.tick)
-        self.get_logger().info(f"arm on {port} @ {baud}, max {self.max_step * RATE} deg/s")
+        self.get_logger().info(
+            f"arm on {port} @ {baud}, max {self.max_step * RATE} deg/s"
+        )
 
     def on_estop(self, msg):
         self.estop = msg.data
         if self.estop:
-            self.target = list(self.current)  # stop mid-ramp; releasing estop must not resume it
+            # stop mid-ramp; releasing estop must not resume it
+            self.target = list(self.current)
 
     def on_command(self, msg):
         angles = list(msg.data)
         if self.estop:
-            self.get_logger().warn("estop active: arm command ignored", throttle_duration_sec=2.0)
+            self.get_logger().warn(
+                "estop active: arm command ignored", throttle_duration_sec=2.0
+            )
         elif not valid(angles, self.lo, self.hi):
-            self.get_logger().warn(f"rejected arm command {angles}: need 6 angles in {self.lo}..{self.hi}")
+            self.get_logger().warn(
+                f"rejected arm command {angles}: need 6 angles in {self.lo}..{self.hi}"
+            )
         else:
             self.target = angles
 
