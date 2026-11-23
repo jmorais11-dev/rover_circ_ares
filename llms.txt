@@ -3,22 +3,22 @@
 > Documentação sobre o desenvolvimento da navegação autônoma (Nav2) do rover da equipe ARES
 
 ## Pages
-- [Home](https://blazemorales.github.io/rover_circ_ares/index.md)
+- [Home](https://jmorais11-dev.github.io/rover_circ_ares/index.md)
 
 ## Pages
-- [Pages](https://blazemorales.github.io/rover_circ_ares/pages/index.md)
+- [Pages](https://jmorais11-dev.github.io/rover_circ_ares/pages/index.md)
 
-- [Auditoria de Prontidão — Lançamento e Bancada](https://blazemorales.github.io/rover_circ_ares/auditoria-prontidao/index.md): O que falta no repositório para ligar o rover real com segurança e para os testes de bancada, comparado aos requisitos do CIRC.
-- [Chat Web — Comandar o Rover por um Link](https://blazemorales.github.io/rover_circ_ares/chat-web/index.md): Página pública (Render) onde um LLM gratuito (Groq) comanda o rover simulado no PC, através de um agente local que mantém a camada de segurança.
-- [Comandos Essenciais — Simulação Gazebo do Rover](https://blazemorales.github.io/rover_circ_ares/comandos-essenciais-simulacao/index.md): Passo a passo completo, sequencial e testado para compilar e rodar a simulação do rover Sawppy no Gazebo (mundos Moon/Mars/Forest), com SLAM e exploração autônoma.
-- [Desempenho da Simulação — RTF do Gazebo](https://blazemorales.github.io/rover_circ_ares/desempenho-simulacao/index.md): Por que a simulação do rover rodava a 18% do tempo real, como o gargalo foi isolado e o perfil leve sim_lite que dobra o RTF.
-- [Dev Container (VS Code)](https://blazemorales.github.io/rover_circ_ares/dev-container/index.md): Como abrir o projeto no VS Code com Dev Containers: ROS 2 Jazzy, Gazebo e RViz2 sem instalar nada no host.
-- [Diário de Bordo — Rover Sim](https://blazemorales.github.io/rover_circ_ares/diario-de-bordo/index.md): Log técnico do desenvolvimento da simulação do rover: decisões, bugs encontrados e correções.
-- [Requisitos do CIRC — Checklist](https://blazemorales.github.io/rover_circ_ares/requisitos-circ/index.md): Requisitos do regulamento e das provas do CIRC 2027 e o que falta no projeto, em forma de checklist.
-- [ROS-MCP — Comandar o Rover em Linguagem Natural](https://blazemorales.github.io/rover_circ_ares/ros-mcp/index.md): Arquitetura, camada de segurança e validação da integração do rover com LLMs via Model Context Protocol (ros-mcp + rosbridge).
+- [Auditoria de Prontidão — Lançamento e Bancada](https://jmorais11-dev.github.io/rover_circ_ares/auditoria-prontidao/index.md): O que falta no repositório para ligar o rover real com segurança e para os testes de bancada, comparado aos requisitos do CIRC.
+- [Chat Web — Comandar o Rover por um Link](https://jmorais11-dev.github.io/rover_circ_ares/chat-web/index.md): Página pública (Render) onde um LLM gratuito (Groq) comanda o rover simulado no PC, através de um agente local que mantém a camada de segurança.
+- [Comandos Essenciais — Simulação Gazebo do Rover](https://jmorais11-dev.github.io/rover_circ_ares/comandos-essenciais-simulacao/index.md): Passo a passo completo, sequencial e testado para compilar e rodar a simulação do rover Sawppy no Gazebo (mundos Moon/Mars/Forest), com SLAM e exploração autônoma.
+- [Desempenho da Simulação — RTF do Gazebo](https://jmorais11-dev.github.io/rover_circ_ares/desempenho-simulacao/index.md): Por que a simulação do rover rodava a 18% do tempo real, como o gargalo foi isolado e o perfil leve sim_lite que dobra o RTF.
+- [Dev Container (VS Code)](https://jmorais11-dev.github.io/rover_circ_ares/dev-container/index.md): Como abrir o projeto no VS Code com Dev Containers: ROS 2 Jazzy, Gazebo e RViz2 sem instalar nada no host.
+- [Diário de Bordo — Rover Sim](https://jmorais11-dev.github.io/rover_circ_ares/diario-de-bordo/index.md): Log técnico do desenvolvimento da simulação do rover: decisões, bugs encontrados e correções.
+- [Requisitos do CIRC — Checklist](https://jmorais11-dev.github.io/rover_circ_ares/requisitos-circ/index.md): Requisitos do regulamento e das provas do CIRC 2027 e o que falta no projeto, em forma de checklist.
+- [ROS-MCP — Comandar o Rover em Linguagem Natural](https://jmorais11-dev.github.io/rover_circ_ares/ros-mcp/index.md): Arquitetura, camada de segurança e validação da integração do rover com LLMs via Model Context Protocol (ros-mcp + rosbridge).
 
 ## Categories
-- [Categories](https://blazemorales.github.io/rover_circ_ares/categories/index.md)
+- [Categories](https://jmorais11-dev.github.io/rover_circ_ares/categories/index.md)
 
 ## Tags
-- [Tags](https://blazemorales.github.io/rover_circ_ares/tags/index.md)
+- [Tags](https://jmorais11-dev.github.io/rover_circ_ares/tags/index.md)

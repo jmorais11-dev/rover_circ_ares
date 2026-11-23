@@ -20,7 +20,7 @@ estão no [checklist de requisitos](/requisitos-circ).
 {{< notice "warning" >}}
 **Respostas pendentes da equipe:** seis perguntas sobre hardware e decisões travam o
 começo do trabalho. Respondam na issue
-[#32](https://github.com/Blazemorales/rover_circ_ares/issues/32) (resumo na
+[#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32) (resumo na
 [seção 6](#6-perguntas-para-a-equipe)).
 {{< /notice >}}
 
@@ -67,7 +67,7 @@ repositório (depende de hardware ou de documento externo).
 |---|---|---|---|
 | L1 | Kill switch físico, vermelho, iluminado, no topo, independente de computador [R5] | ❔ | É hardware. Nada no repositório confirma que existe. |
 | L2 | Fusível ou disjuntor; proteção por software não vale [R5] | ❔ | É hardware. |
-| L3 | 1 h só com bateria de bordo; bateria e BMS comerciais [R3][R5] | ❔ | Não há orçamento de energia ([#25](https://github.com/Blazemorales/rover_circ_ares/issues/25)). |
+| L3 | 1 h só com bateria de bordo; bateria e BMS comerciais [R3][R5] | ❔ | Não há orçamento de energia ([#25](https://github.com/jmorais11-dev/rover_circ_ares/issues/25)). |
 | L4 | Parar os motores quando o comando some (watchdog, perda de link) [R5 recomendado] | 🟡 | **Código pronto, falta bancada.** `controller_node` zera o duty se não chega comando por `cmd_timeout` (padrão 0,5 s) e repete o zero a cada 100 ms. |
 | L5 | Parar os motores ao encerrar o programa (Ctrl+C, `systemctl stop`, falha) [I] | 🟡 | **Código pronto, falta bancada.** `controller_node_main.cpp` chama `shutdown()` (`kill_motors()`) depois do `spin`, no SIGINT e no SIGTERM. Um `kill -9` ou queda de energia ainda depende do watchdog do lado do hardware (kill switch). |
 | L6 | Limitar os comandos de motor [I] | ✅ | `vel_parser_node.cpp` limita `linear.x` e `angular.z` nos dois sentidos; antes, `angular.z` negativo além do limite gerava raio de curva fora da faixa. O duty já era limitado a ±1000 no driver (`lx16a.cpp`, `set_motor_mode`). Teste: `test/test_vel_parser.cpp`. |
@@ -76,7 +76,7 @@ repositório (depende de hardware ou de documento externo).
 | L9 | Portas seriais estáveis [I] | ❌ | `urg_node_serial.yaml` e `ublox.yaml` usam **ambos** `/dev/ttyACM0`; servos em `/dev/ttyUSB0`. Sem regras udev, quem abre o quê depende da ordem em que o USB enumera. |
 | L10 | Boot reproduzível (systemd) | 🟡 | `ros2/rover_service/` existe, mas: `After=network.service` em vez de `network-online.target`; sem `Restart=on-failure`; sem `ROS_DOMAIN_ID`. Assume ROS no host, contra o README (ROS só em Docker). `install.sh` usa caminhos relativos e instala 3 pacotes à mão em vez de `rosdep`. |
 | L11 | Botão de habilitação no joystick (deadman) | 🟡 | `ps3.yaml`: `enable_button: 8` (L2); soltar o botão manda velocidade zero. Não protege se o joystick ou o nó cair no meio do comando (ver L4). |
-| L12 | Modos desarmado / manual / autônomo [I] | ❌ | Não existe gerente de modos ([#18](https://github.com/Blazemorales/rover_circ_ares/issues/18)). Os motores aceitam comando assim que o nó sobe. |
+| L12 | Modos desarmado / manual / autônomo [I] | ❌ | Não existe gerente de modos ([#18](https://github.com/jmorais11-dev/rover_circ_ares/issues/18)). Os motores aceitam comando assim que o nó sobe. |
 
 ## 3. Bancada: testar subsistemas sozinhos e juntos
 
@@ -87,9 +87,9 @@ repositório (depende de hardware ou de documento externo).
 | B3 | Testes automáticos do caminho até os motores | ❌ | O workflow *Tests* só roda para `tools/**` (política do MCP). Não há teste do `vel_parser` nem do protocolo LX-16A. |
 | B4 | Drivers de sensores e TF do rover real | 🟡 | `rover.launch.py` sobe só `urg_node`, joystick e motores. Falta `robot_state_publisher` (sem TF `base_link→laser`), IMU e câmera. `ublox.launch.py` existe mas não é incluído, `ublox_gps` não está no `package.xml` e o `ublox.yaml` está em `tmode3: 1` (modo **estação base** RTK). |
 | B5 | Telemetria de saúde: tensão e temperatura [R5 recomendado] | ❌ | O LX-16A já oferece leitura de temperatura e tensão (`SERVO_TEMP_READ`, `SERVO_VIN_READ` em `lx16a_consts.hpp`), mas nada é publicado. |
-| B6 | Estação e rover separados por rede (operador não vê o rover) [R3] | ❌ | O joystick roda **no rover** (`joy_linux` em `rover.launch.py`). Não há launch da estação, IPs fixos nem `ROS_DOMAIN_ID` ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19)). |
+| B6 | Estação e rover separados por rede (operador não vê o rover) [R3] | ❌ | O joystick roda **no rover** (`joy_linux` em `rover.launch.py`). Não há launch da estação, IPs fixos nem `ROS_DOMAIN_ID` ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19)). |
 | B7 | Calibração da direção e da geometria | 🟡 | `enc_min=250`, `enc_max=750` e `hardware_distances` são os valores do Sawppy original. Não há procedimento para medi-los no nosso chassi. |
-| B8 | Gravação de dados (rosbag) | ❌ | [#20](https://github.com/Blazemorales/rover_circ_ares/issues/20). |
+| B8 | Gravação de dados (rosbag) | ❌ | [#20](https://github.com/jmorais11-dev/rover_circ_ares/issues/20). |
 | B9 | Roteiro de bancada escrito | ❌ | No README, "Rover real" é um único comando. Não há passo a passo nem critério de aprovado/reprovado. |
 
 ## 4. Lacunas
@@ -132,7 +132,7 @@ flowchart TD
   P7 --> P8["8. Sensores, TF, rosbag,<br/>telemetria, roteiro"]
 {{< /mermaid >}}
 
-1. **Responder às perguntas da [#32](https://github.com/Blazemorales/rover_circ_ares/issues/32).**
+1. **Responder às perguntas da [#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32).**
    Elas dizem quais portas, drivers e computador existem; todo o resto depende disso.
 2. **Segurança dos motores** (L4–L7): timer que zera os motores sem comando novo por N ms;
    `kill_motors()` ao encerrar; validar o tamanho das mensagens; checar o `connect()`;
@@ -154,7 +154,7 @@ flowchart TD
 
 ## 6. Perguntas para a equipe
 
-Respondam na issue [#32](https://github.com/Blazemorales/rover_circ_ares/issues/32),
+Respondam na issue [#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32),
 citando o número da pergunta. Esta página será atualizada com as respostas.
 
 | # | Pergunta | Quem responde | Resposta |

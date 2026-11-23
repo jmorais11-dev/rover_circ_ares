@@ -155,7 +155,7 @@ o comportamento sem a gente saber.
   (`kill -9`) ou faltar energia no computador, nenhum código roda. Aí quem
   protege é o kill switch físico.
 - **Confirmar o 0,5 s com a equipe** (pergunta Q5 da
-  [issue #32](https://github.com/Blazemorales/rover_circ_ares/issues/32)).
+  [issue #32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32)).
 - **Colocar esse teste na CI**, para que uma mudança futura não desfaça a
   proteção sem ninguém perceber.
 

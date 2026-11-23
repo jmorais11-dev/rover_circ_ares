@@ -4,19 +4,19 @@
 
 --------------------------------------------------------------------------------
 title: "Home"
-url: https://blazemorales.github.io/rover_circ_ares/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/index.md
 --------------------------------------------------------------------------------
 <no value>
 
 --------------------------------------------------------------------------------
 title: "Pages"
-url: https://blazemorales.github.io/rover_circ_ares/pages/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/pages/index.md
 --------------------------------------------------------------------------------
 <no value>
 
 --------------------------------------------------------------------------------
 title: "Auditoria de Prontidão — Lançamento e Bancada"
-url: https://blazemorales.github.io/rover_circ_ares/auditoria-prontidao/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/auditoria-prontidao/index.md
 description: O que falta no repositório para ligar o rover real com segurança e para os testes de bancada, comparado aos requisitos do CIRC.
 --------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ estão no [checklist de requisitos](/requisitos-circ).
 {{< notice "warning" >}}
 **Respostas pendentes da equipe:** seis perguntas sobre hardware e decisões travam o
 começo do trabalho. Respondam na issue
-[#32](https://github.com/Blazemorales/rover_circ_ares/issues/32) (resumo na
+[#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32) (resumo na
 [seção 6](#6-perguntas-para-a-equipe)).
 {{< /notice >}}
 
@@ -83,7 +83,7 @@ repositório (depende de hardware ou de documento externo).
 |---|---|---|---|
 | L1 | Kill switch físico, vermelho, iluminado, no topo, independente de computador [R5] | ❔ | É hardware. Nada no repositório confirma que existe. |
 | L2 | Fusível ou disjuntor; proteção por software não vale [R5] | ❔ | É hardware. |
-| L3 | 1 h só com bateria de bordo; bateria e BMS comerciais [R3][R5] | ❔ | Não há orçamento de energia ([#25](https://github.com/Blazemorales/rover_circ_ares/issues/25)). |
+| L3 | 1 h só com bateria de bordo; bateria e BMS comerciais [R3][R5] | ❔ | Não há orçamento de energia ([#25](https://github.com/jmorais11-dev/rover_circ_ares/issues/25)). |
 | L4 | Parar os motores quando o comando some (watchdog, perda de link) [R5 recomendado] | 🟡 | **Código pronto, falta bancada.** `controller_node` zera o duty se não chega comando por `cmd_timeout` (padrão 0,5 s) e repete o zero a cada 100 ms. |
 | L5 | Parar os motores ao encerrar o programa (Ctrl+C, `systemctl stop`, falha) [I] | 🟡 | **Código pronto, falta bancada.** `controller_node_main.cpp` chama `shutdown()` (`kill_motors()`) depois do `spin`, no SIGINT e no SIGTERM. Um `kill -9` ou queda de energia ainda depende do watchdog do lado do hardware (kill switch). |
 | L6 | Limitar os comandos de motor [I] | ✅ | `vel_parser_node.cpp` limita `linear.x` e `angular.z` nos dois sentidos; antes, `angular.z` negativo além do limite gerava raio de curva fora da faixa. O duty já era limitado a ±1000 no driver (`lx16a.cpp`, `set_motor_mode`). Teste: `test/test_vel_parser.cpp`. |
@@ -92,7 +92,7 @@ repositório (depende de hardware ou de documento externo).
 | L9 | Portas seriais estáveis [I] | ❌ | `urg_node_serial.yaml` e `ublox.yaml` usam **ambos** `/dev/ttyACM0`; servos em `/dev/ttyUSB0`. Sem regras udev, quem abre o quê depende da ordem em que o USB enumera. |
 | L10 | Boot reproduzível (systemd) | 🟡 | `ros2/rover_service/` existe, mas: `After=network.service` em vez de `network-online.target`; sem `Restart=on-failure`; sem `ROS_DOMAIN_ID`. Assume ROS no host, contra o README (ROS só em Docker). `install.sh` usa caminhos relativos e instala 3 pacotes à mão em vez de `rosdep`. |
 | L11 | Botão de habilitação no joystick (deadman) | 🟡 | `ps3.yaml`: `enable_button: 8` (L2); soltar o botão manda velocidade zero. Não protege se o joystick ou o nó cair no meio do comando (ver L4). |
-| L12 | Modos desarmado / manual / autônomo [I] | ❌ | Não existe gerente de modos ([#18](https://github.com/Blazemorales/rover_circ_ares/issues/18)). Os motores aceitam comando assim que o nó sobe. |
+| L12 | Modos desarmado / manual / autônomo [I] | ❌ | Não existe gerente de modos ([#18](https://github.com/jmorais11-dev/rover_circ_ares/issues/18)). Os motores aceitam comando assim que o nó sobe. |
 
 ## 3. Bancada: testar subsistemas sozinhos e juntos
 
@@ -103,9 +103,9 @@ repositório (depende de hardware ou de documento externo).
 | B3 | Testes automáticos do caminho até os motores | ❌ | O workflow *Tests* só roda para `tools/**` (política do MCP). Não há teste do `vel_parser` nem do protocolo LX-16A. |
 | B4 | Drivers de sensores e TF do rover real | 🟡 | `rover.launch.py` sobe só `urg_node`, joystick e motores. Falta `robot_state_publisher` (sem TF `base_link→laser`), IMU e câmera. `ublox.launch.py` existe mas não é incluído, `ublox_gps` não está no `package.xml` e o `ublox.yaml` está em `tmode3: 1` (modo **estação base** RTK). |
 | B5 | Telemetria de saúde: tensão e temperatura [R5 recomendado] | ❌ | O LX-16A já oferece leitura de temperatura e tensão (`SERVO_TEMP_READ`, `SERVO_VIN_READ` em `lx16a_consts.hpp`), mas nada é publicado. |
-| B6 | Estação e rover separados por rede (operador não vê o rover) [R3] | ❌ | O joystick roda **no rover** (`joy_linux` em `rover.launch.py`). Não há launch da estação, IPs fixos nem `ROS_DOMAIN_ID` ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19)). |
+| B6 | Estação e rover separados por rede (operador não vê o rover) [R3] | ❌ | O joystick roda **no rover** (`joy_linux` em `rover.launch.py`). Não há launch da estação, IPs fixos nem `ROS_DOMAIN_ID` ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19)). |
 | B7 | Calibração da direção e da geometria | 🟡 | `enc_min=250`, `enc_max=750` e `hardware_distances` são os valores do Sawppy original. Não há procedimento para medi-los no nosso chassi. |
-| B8 | Gravação de dados (rosbag) | ❌ | [#20](https://github.com/Blazemorales/rover_circ_ares/issues/20). |
+| B8 | Gravação de dados (rosbag) | ❌ | [#20](https://github.com/jmorais11-dev/rover_circ_ares/issues/20). |
 | B9 | Roteiro de bancada escrito | ❌ | No README, "Rover real" é um único comando. Não há passo a passo nem critério de aprovado/reprovado. |
 
 ## 4. Lacunas
@@ -148,7 +148,7 @@ flowchart TD
   P7 --> P8["8. Sensores, TF, rosbag,<br/>telemetria, roteiro"]
 {{< /mermaid >}}
 
-1. **Responder às perguntas da [#32](https://github.com/Blazemorales/rover_circ_ares/issues/32).**
+1. **Responder às perguntas da [#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32).**
    Elas dizem quais portas, drivers e computador existem; todo o resto depende disso.
 2. **Segurança dos motores** (L4–L7): timer que zera os motores sem comando novo por N ms;
    `kill_motors()` ao encerrar; validar o tamanho das mensagens; checar o `connect()`;
@@ -170,7 +170,7 @@ flowchart TD
 
 ## 6. Perguntas para a equipe
 
-Respondam na issue [#32](https://github.com/Blazemorales/rover_circ_ares/issues/32),
+Respondam na issue [#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32),
 citando o número da pergunta. Esta página será atualizada com as respostas.
 
 | # | Pergunta | Quem responde | Resposta |
@@ -185,7 +185,7 @@ citando o número da pergunta. Esta página será atualizada com as respostas.
 
 --------------------------------------------------------------------------------
 title: "Chat Web — Comandar o Rover por um Link"
-url: https://blazemorales.github.io/rover_circ_ares/chat-web/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/chat-web/index.md
 description: Página pública (Render) onde um LLM gratuito (Groq) comanda o rover simulado no PC, através de um agente local que mantém a camada de segurança.
 --------------------------------------------------------------------------------
 
@@ -368,7 +368,7 @@ Bateria de 7 goals (quadrado de 3 m, volta à origem, 6 m e 10 m):
 
 --------------------------------------------------------------------------------
 title: "Comandos Essenciais — Simulação Gazebo do Rover"
-url: https://blazemorales.github.io/rover_circ_ares/comandos-essenciais-simulacao/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/comandos-essenciais-simulacao/index.md
 description: Passo a passo completo, sequencial e testado para compilar e rodar a simulação do rover Sawppy no Gazebo (mundos Moon/Mars/Forest), com SLAM e exploração autônoma.
 --------------------------------------------------------------------------------
 
@@ -519,7 +519,7 @@ ps -eo pid=,comm= | awk '$1 != 1 {print $1}' | xargs -r kill
 
 --------------------------------------------------------------------------------
 title: "Desempenho da Simulação — RTF do Gazebo"
-url: https://blazemorales.github.io/rover_circ_ares/desempenho-simulacao/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/desempenho-simulacao/index.md
 description: Por que a simulação do rover rodava a 18% do tempo real, como o gargalo foi isolado e o perfil leve sim_lite que dobra o RTF.
 --------------------------------------------------------------------------------
 
@@ -673,7 +673,7 @@ efeito é neutro; contra o desktop em `nice 0`, o Gazebo perde arbitragem.
 
 --------------------------------------------------------------------------------
 title: "Dev Container (VS Code)"
-url: https://blazemorales.github.io/rover_circ_ares/dev-container/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/dev-container/index.md
 description: Como abrir o projeto no VS Code com Dev Containers: ROS 2 Jazzy, Gazebo e RViz2 sem instalar nada no host.
 --------------------------------------------------------------------------------
 
@@ -804,7 +804,7 @@ ros2 launch rover_teleop joy_teleop.launch.py
 
 --------------------------------------------------------------------------------
 title: "Diário de Bordo — Rover Sim"
-url: https://blazemorales.github.io/rover_circ_ares/diario-de-bordo/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/diario-de-bordo/index.md
 description: Log técnico do desenvolvimento da simulação do rover: decisões, bugs encontrados e correções.
 --------------------------------------------------------------------------------
 
@@ -959,7 +959,7 @@ o comportamento sem a gente saber.
   (`kill -9`) ou faltar energia no computador, nenhum código roda. Aí quem
   protege é o kill switch físico.
 - **Confirmar o 0,5 s com a equipe** (pergunta Q5 da
-  [issue #32](https://github.com/Blazemorales/rover_circ_ares/issues/32)).
+  [issue #32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32)).
 - **Colocar esse teste na CI**, para que uma mudança futura não desfaça a
   proteção sem ninguém perceber.
 
@@ -1316,7 +1316,7 @@ pra limpar, e pode matar o processo errado).
 
 --------------------------------------------------------------------------------
 title: "Requisitos do CIRC — Checklist"
-url: https://blazemorales.github.io/rover_circ_ares/requisitos-circ/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/requisitos-circ/index.md
 description: Requisitos do regulamento e das provas do CIRC 2027 e o que falta no projeto, em forma de checklist.
 --------------------------------------------------------------------------------
 
@@ -1326,7 +1326,7 @@ description: Requisitos do regulamento e das provas do CIRC 2027 e o que falta n
 Base: regulamento e provas do CIRC 2027 ([R3] regras, [R4] provas, [R5] segurança), usados como
 especificação para competir em 2028. Fonte: *Levantamento Inicial CIRC v2 (05/11/2026)*.
 
-Os números `#` são as issues do repositório `Blazemorales/rover_circ_ares`. A [#26](https://github.com/Blazemorales/rover_circ_ares/issues/26) acompanha todas.
+Os números `#` são as issues do repositório `jmorais11-dev/rover_circ_ares`. A [#26](https://github.com/jmorais11-dev/rover_circ_ares/issues/26) acompanha todas.
 
 ## 1. Requisitos gerais do rover [R3]
 
@@ -1340,9 +1340,9 @@ Os números `#` são as issues do repositório `Blazemorales/rover_circ_ares`. A
 | Tamanho | Passar por uma porta de 0,8 m. |
 | Autoria | Projeto da equipe. Pode usar bibliotecas abertas e controladores de motor comprados. |
 
-- [ ] Fechar o orçamento de massa e de energia do computador de bordo e dos sensores, junto com Elétrica e Estruturas ([#25](https://github.com/Blazemorales/rover_circ_ares/issues/25))
-- [ ] Self-check automático na inicialização para caber nos 15 min ([#18](https://github.com/Blazemorales/rover_circ_ares/issues/18))
-- [ ] Monitorar temperatura e cortar acima do limite ([#18](https://github.com/Blazemorales/rover_circ_ares/issues/18))
+- [ ] Fechar o orçamento de massa e de energia do computador de bordo e dos sensores, junto com Elétrica e Estruturas ([#25](https://github.com/jmorais11-dev/rover_circ_ares/issues/25))
+- [ ] Self-check automático na inicialização para caber nos 15 min ([#18](https://github.com/jmorais11-dev/rover_circ_ares/issues/18))
+- [ ] Monitorar temperatura e cortar acima do limite ([#18](https://github.com/jmorais11-dev/rover_circ_ares/issues/18))
 
 ## 2. Segurança [R5]
 
@@ -1355,7 +1355,7 @@ Os números `#` são as issues do repositório `Blazemorales/rover_circ_ares`. A
 - [ ] Bateria comercial com BMS comercial. LiFePO4 tem desconto de 40% no peso. Menos de 1000 Wh, fácil de remover.
 - [ ] Recomendado: parada remota por um rádio independente do link principal
 
-**Software ([#18](https://github.com/Blazemorales/rover_circ_ares/issues/18)):**
+**Software ([#18](https://github.com/jmorais11-dev/rover_circ_ares/issues/18)):**
 
 - [ ] Gerente de modos (desarmado, manual, autônomo)
 - [ ] Watchdog no `/cmd_vel` e heartbeat da estação, com parada se o link cair
@@ -1372,12 +1372,12 @@ Os números `#` são as issues do repositório `Blazemorales/rover_circ_ares`. A
 | Backhaul | Ethernet 100BASE-TX, MTU 1500, sem DHCP, 50–100 Mbit/s |
 | Capacidade mínima | Dirigir, manipular e receber telemetria, mesmo sem vídeo |
 
-- [ ] Escolher o rádio e os canais junto com Telecom ([#25](https://github.com/Blazemorales/rover_circ_ares/issues/25))
-- [ ] IPs fixos, sem DHCP ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19))
-- [ ] Comando e telemetria com prioridade sobre o vídeo ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19))
-- [ ] Vídeo adaptativo com GStreamer em H.265 e troca de câmera ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19))
-- [ ] Monitor de link e testes com perda e atraso simulados por `tc netem` ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19))
-- [ ] Avaliar Zenoh contra DDS ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19))
+- [ ] Escolher o rádio e os canais junto com Telecom ([#25](https://github.com/jmorais11-dev/rover_circ_ares/issues/25))
+- [ ] IPs fixos, sem DHCP ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19))
+- [ ] Comando e telemetria com prioridade sobre o vídeo ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19))
+- [ ] Vídeo adaptativo com GStreamer em H.265 e troca de câmera ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19))
+- [ ] Monitor de link e testes com perda e atraso simulados por `tc netem` ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19))
+- [ ] Avaliar Zenoh contra DDS ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19))
 
 ## 4. Autonomia [R3][R4]
 
@@ -1389,45 +1389,45 @@ Os números `#` são as issues do repositório `Blazemorales/rover_circ_ares`. A
 | Distâncias | Medidas pelo odômetro sobre o terreno |
 | ArUco | Dicionário 4x4_100, leitura mostrada automaticamente ao juiz |
 
-- [ ] GNSS na simulação, `navsat_transform` e EKF fundindo GNSS, IMU e odometria de rodas ([#11](https://github.com/Blazemorales/rover_circ_ares/issues/11))
-- [ ] Rumo absoluto com correção de declinação ([#12](https://github.com/Blazemorales/rover_circ_ares/issues/12))
-- [ ] Indicador de entrada e saída do modo autônomo ([#15](https://github.com/Blazemorales/rover_circ_ares/issues/15))
-- [ ] Detecção ArUco com tela para o juiz ([#16](https://github.com/Blazemorales/rover_circ_ares/issues/16))
+- [ ] GNSS na simulação, `navsat_transform` e EKF fundindo GNSS, IMU e odometria de rodas ([#11](https://github.com/jmorais11-dev/rover_circ_ares/issues/11))
+- [ ] Rumo absoluto com correção de declinação ([#12](https://github.com/jmorais11-dev/rover_circ_ares/issues/12))
+- [ ] Indicador de entrada e saída do modo autônomo ([#15](https://github.com/jmorais11-dev/rover_circ_ares/issues/15))
+- [ ] Detecção ArUco com tela para o juiz ([#16](https://github.com/jmorais11-dev/rover_circ_ares/issues/16))
 
 ## 5. Provas de 2027 [R4]
 
 ### Automated Demolition and Clearing (inteiramente autônoma)
 
-- [ ] Actions de movimento: `Drive Forward` e `Drive Backwards` (1/3/5 m), `Rotate`, `Rotate and Drive` ([#14](https://github.com/Blazemorales/rover_circ_ares/issues/14))
-- [ ] `Face Bearing`, `Report Bearing`, `Report GNSS`, `Drive to Waypoint` (até 3 m), `Drive to Marked Waypoint` (até 1 m) ([#14](https://github.com/Blazemorales/rover_circ_ares/issues/14))
-- [ ] `Read and Store Markers` e `Retrieve Markers` ([#16](https://github.com/Blazemorales/rover_circ_ares/issues/16))
-- [ ] Comandos EFF do braço ([#23](https://github.com/Blazemorales/rover_circ_ares/issues/23))
-- [ ] UI do juiz com botões `[short] long name`, campos com unidade e disparo com um clique ([#15](https://github.com/Blazemorales/rover_circ_ares/issues/15))
+- [ ] Actions de movimento: `Drive Forward` e `Drive Backwards` (1/3/5 m), `Rotate`, `Rotate and Drive` ([#14](https://github.com/jmorais11-dev/rover_circ_ares/issues/14))
+- [ ] `Face Bearing`, `Report Bearing`, `Report GNSS`, `Drive to Waypoint` (até 3 m), `Drive to Marked Waypoint` (até 1 m) ([#14](https://github.com/jmorais11-dev/rover_circ_ares/issues/14))
+- [ ] `Read and Store Markers` e `Retrieve Markers` ([#16](https://github.com/jmorais11-dev/rover_circ_ares/issues/16))
+- [ ] Comandos EFF do braço ([#23](https://github.com/jmorais11-dev/rover_circ_ares/issues/23))
+- [ ] UI do juiz com botões `[short] long name`, campos com unidade e disparo com um clique ([#15](https://github.com/jmorais11-dev/rover_circ_ares/issues/15))
 
 ### Meteorite Search (sem GPS)
 
-- [ ] Navegação por odometria de rodas e IMU, relativa a marcos ([#13](https://github.com/Blazemorales/rover_circ_ares/issues/13))
-- [ ] Fotos de dois ângulos (≥ 90° entre elas) e panorama de 180°/360° ([#17](https://github.com/Blazemorales/rover_circ_ares/issues/17))
-- [ ] Leitura do contador Geiger por TRS ([#22](https://github.com/Blazemorales/rover_circ_ares/issues/22))
-- [ ] Relatório entregue até 2 h depois da prova ([#20](https://github.com/Blazemorales/rover_circ_ares/issues/20))
+- [ ] Navegação por odometria de rodas e IMU, relativa a marcos ([#13](https://github.com/jmorais11-dev/rover_circ_ares/issues/13))
+- [ ] Fotos de dois ângulos (≥ 90° entre elas) e panorama de 180°/360° ([#17](https://github.com/jmorais11-dev/rover_circ_ares/issues/17))
+- [ ] Leitura do contador Geiger por TRS ([#22](https://github.com/jmorais11-dev/rover_circ_ares/issues/22))
+- [ ] Relatório entregue até 2 h depois da prova ([#20](https://github.com/jmorais11-dev/rover_circ_ares/issues/20))
 
 ### Reactor Recovery
 
-- [ ] Setores com tempestade em horário marcado, via keepout do Nav2 variando no tempo ([#21](https://github.com/Blazemorales/rover_circ_ares/issues/21))
-- [ ] Receptor de beacon por UART/TRS ([#22](https://github.com/Blazemorales/rover_circ_ares/issues/22))
-- [ ] Pegar objetos de até 5 kg com ponto de pega de até 80 mm ([#23](https://github.com/Blazemorales/rover_circ_ares/issues/23))
+- [ ] Setores com tempestade em horário marcado, via keepout do Nav2 variando no tempo ([#21](https://github.com/jmorais11-dev/rover_circ_ares/issues/21))
+- [ ] Receptor de beacon por UART/TRS ([#22](https://github.com/jmorais11-dev/rover_circ_ares/issues/22))
+- [ ] Pegar objetos de até 5 kg com ponto de pega de até 80 mm ([#23](https://github.com/jmorais11-dev/rover_circ_ares/issues/23))
 
 ### Prison Break (à noite)
 
-- [ ] Terminal serial do console de segurança por TRS ([#22](https://github.com/Blazemorales/rover_circ_ares/issues/22))
-- [ ] Câmeras para pouca luz, sem iluminar o chão, nem com infravermelho (hardware e [#24](https://github.com/Blazemorales/rover_circ_ares/issues/24))
+- [ ] Terminal serial do console de segurança por TRS ([#22](https://github.com/jmorais11-dev/rover_circ_ares/issues/22))
+- [ ] Câmeras para pouca luz, sem iluminar o chão, nem com infravermelho (hardware e [#24](https://github.com/jmorais11-dev/rover_circ_ares/issues/24))
 
 ### Mining Site Remote Operations
 
-- [ ] Operação inteira pelo backhaul, dentro do limite de banda ([#19](https://github.com/Blazemorales/rover_circ_ares/issues/19))
-- [ ] Opcional: usar a nuvem de pontos LIDAR de 2018 no planejamento ([#24](https://github.com/Blazemorales/rover_circ_ares/issues/24))
+- [ ] Operação inteira pelo backhaul, dentro do limite de banda ([#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19))
+- [ ] Opcional: usar a nuvem de pontos LIDAR de 2018 no planejamento ([#24](https://github.com/jmorais11-dev/rover_circ_ares/issues/24))
 
-## 6. Braço [R3][R4] ([#23](https://github.com/Blazemorales/rover_circ_ares/issues/23))
+## 6. Braço [R3][R4] ([#23](https://github.com/jmorais11-dev/rover_circ_ares/issues/23))
 
 - [ ] Braço e garra no URDF, com ros2_control
 - [ ] MoveIt 2 e MoveIt Servo
@@ -1436,9 +1436,9 @@ Os números `#` são as issues do repositório `Blazemorales/rover_circ_ares`. A
 
 ## 7. Infraestrutura e testes
 
-- [ ] Mundo de simulação com ArUco, torres, objetos e cenário noturno ([#24](https://github.com/Blazemorales/rover_circ_ares/issues/24))
-- [ ] Gravação com `ros2 bag` e log de missão ([#20](https://github.com/Blazemorales/rover_circ_ares/issues/20))
-- [ ] Documento de interfaces com Embarcados, Elétrica, Telecom e Estruturas ([#25](https://github.com/Blazemorales/rover_circ_ares/issues/25))
+- [ ] Mundo de simulação com ArUco, torres, objetos e cenário noturno ([#24](https://github.com/jmorais11-dev/rover_circ_ares/issues/24))
+- [ ] Gravação com `ros2 bag` e log de missão ([#20](https://github.com/jmorais11-dev/rover_circ_ares/issues/20))
+- [ ] Documento de interfaces com Embarcados, Elétrica, Telecom e Estruturas ([#25](https://github.com/jmorais11-dev/rover_circ_ares/issues/25))
 
 ## Já atendido
 
@@ -1450,23 +1450,23 @@ Os números `#` são as issues do repositório `Blazemorales/rover_circ_ares`. A
 
 ## Parcialmente atendido
 
-- [ ] Implantação via systemd: o serviço existe, mas o boot ainda não é reproduzível (ver [auditoria de prontidão](/auditoria-prontidao), item L10, e [#32](https://github.com/Blazemorales/rover_circ_ares/issues/32))
+- [ ] Implantação via systemd: o serviço existe, mas o boot ainda não é reproduzível (ver [auditoria de prontidão](/auditoria-prontidao), item L10, e [#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32))
 
 ## Ordem sugerida
 
 A segurança vem primeiro: sem ela não dá para ligar o rover real nem fazer bancada. Detalhes na [auditoria de prontidão](/auditoria-prontidao).
 
-1. [#32](https://github.com/Blazemorales/rover_circ_ares/issues/32) e [#18](https://github.com/Blazemorales/rover_circ_ares/issues/18): respostas da equipe sobre o hardware e segurança dos motores (watchdog, parada ao encerrar, limites), antes de qualquer teste em hardware real
-2. [#19](https://github.com/Blazemorales/rover_circ_ares/issues/19): rede entre estação e rover, com teste de queda de link
-3. [#11](https://github.com/Blazemorales/rover_circ_ares/issues/11), [#12](https://github.com/Blazemorales/rover_circ_ares/issues/12) e [#14](https://github.com/Blazemorales/rover_circ_ares/issues/14): GNSS, rumo e actions de movimento
-4. [#16](https://github.com/Blazemorales/rover_circ_ares/issues/16) e [#15](https://github.com/Blazemorales/rover_circ_ares/issues/15): ArUco e UI do juiz. Com isso a prova de demolição já pode ser treinada inteira na simulação.
-5. [#13](https://github.com/Blazemorales/rover_circ_ares/issues/13), [#17](https://github.com/Blazemorales/rover_circ_ares/issues/17), [#20](https://github.com/Blazemorales/rover_circ_ares/issues/20) a [#22](https://github.com/Blazemorales/rover_circ_ares/issues/22) e [#24](https://github.com/Blazemorales/rover_circ_ares/issues/24): as outras provas
-6. [#23](https://github.com/Blazemorales/rover_circ_ares/issues/23): braço, no 1º semestre de 2028
+1. [#32](https://github.com/jmorais11-dev/rover_circ_ares/issues/32) e [#18](https://github.com/jmorais11-dev/rover_circ_ares/issues/18): respostas da equipe sobre o hardware e segurança dos motores (watchdog, parada ao encerrar, limites), antes de qualquer teste em hardware real
+2. [#19](https://github.com/jmorais11-dev/rover_circ_ares/issues/19): rede entre estação e rover, com teste de queda de link
+3. [#11](https://github.com/jmorais11-dev/rover_circ_ares/issues/11), [#12](https://github.com/jmorais11-dev/rover_circ_ares/issues/12) e [#14](https://github.com/jmorais11-dev/rover_circ_ares/issues/14): GNSS, rumo e actions de movimento
+4. [#16](https://github.com/jmorais11-dev/rover_circ_ares/issues/16) e [#15](https://github.com/jmorais11-dev/rover_circ_ares/issues/15): ArUco e UI do juiz. Com isso a prova de demolição já pode ser treinada inteira na simulação.
+5. [#13](https://github.com/jmorais11-dev/rover_circ_ares/issues/13), [#17](https://github.com/jmorais11-dev/rover_circ_ares/issues/17), [#20](https://github.com/jmorais11-dev/rover_circ_ares/issues/20) a [#22](https://github.com/jmorais11-dev/rover_circ_ares/issues/22) e [#24](https://github.com/jmorais11-dev/rover_circ_ares/issues/24): as outras provas
+6. [#23](https://github.com/jmorais11-dev/rover_circ_ares/issues/23): braço, no 1º semestre de 2028
 
 
 --------------------------------------------------------------------------------
 title: "ROS-MCP — Comandar o Rover em Linguagem Natural"
-url: https://blazemorales.github.io/rover_circ_ares/ros-mcp/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/ros-mcp/index.md
 description: Arquitetura, camada de segurança e validação da integração do rover com LLMs via Model Context Protocol (ros-mcp + rosbridge).
 --------------------------------------------------------------------------------
 
@@ -1652,12 +1652,12 @@ continuou recusado, e o rover nunca recebeu `/cmd_vel` do LLM.
 
 --------------------------------------------------------------------------------
 title: "Categories"
-url: https://blazemorales.github.io/rover_circ_ares/categories/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/categories/index.md
 --------------------------------------------------------------------------------
 <no value>
 
 --------------------------------------------------------------------------------
 title: "Tags"
-url: https://blazemorales.github.io/rover_circ_ares/tags/index.md
+url: https://jmorais11-dev.github.io/rover_circ_ares/tags/index.md
 --------------------------------------------------------------------------------
 <no value>
