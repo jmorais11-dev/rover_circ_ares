@@ -204,7 +204,6 @@ def generate_launch_description():
         "/camera/depth_image@sensor_msgs/msg/Image[gz.msgs.Image",
         "/camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
         "/imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
-        "/cmd_vel@geometry_msgs/msg/Twist[gz.msgs.Twist",
     ]
     # /camera/points is ~4 MB/msg through the bridge at 720x480; only bridged
     # when the local costmap actually consumes it.

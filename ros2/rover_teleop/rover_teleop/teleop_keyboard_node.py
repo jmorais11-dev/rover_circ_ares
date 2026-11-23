@@ -84,7 +84,8 @@ def main():
     rclpy.init()
 
     node = rclpy.create_node("teleop_keyboard_node")
-    pub = node.create_publisher(geometry_msgs.msg.Twist, "cmd_vel", 10)
+    # input of twist_mux, which owns /cmd_vel
+    pub = node.create_publisher(geometry_msgs.msg.Twist, "cmd_vel_key", 10)
 
     x = 0.0
     th = 0.0

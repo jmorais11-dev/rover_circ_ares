@@ -55,7 +55,9 @@ flowchart LR
   EXP["explore_lite<br/>frontier goals"] --> NAV
   LLM["LLM (Ollama / Groq)"] --> MCP["rover_mcp_safe<br/>MCP proxy, /cmd_vel blocked"]
   MCP -->|rosbridge :9090<br/>Nav2 goals only| NAV
-  NAV -->|/cmd_vel| VP["vel_parser<br/>rocker-bogie kinematics"]
+  NAV -->|velocity_smoother<br/>collision_monitor| MUX["twist_mux<br/>joystick > keyboard > Nav2<br/>/estop lock"]
+  JOY["joystick / keyboard"] --> MUX
+  MUX -->|/cmd_vel| VP["vel_parser<br/>rocker-bogie kinematics"]
   VP --> SIM["Gazebo: ros2_control"]
   VP --> REAL["Real rover: LX-16A servos"]
 ```

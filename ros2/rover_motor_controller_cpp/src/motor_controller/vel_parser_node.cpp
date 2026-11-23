@@ -49,6 +49,8 @@ VelParserNode::VelParserNode() : rclcpp::Node("vel_parser_node") {
   this->declare_parameter<float>("linear_limit", 1.0);
   this->declare_parameter<float>("angular_limit", 1.0);
   this->declare_parameter<float>("angular_factor", 0.0);
+  // publish one stop command if no cmd_vel arrives for this long (seconds)
+  this->declare_parameter<double>("cmd_timeout", 0.5);
 
   // getting params
   std::vector<double> hardware_distances;
@@ -73,9 +75,27 @@ VelParserNode::VelParserNode() : rclcpp::Node("vel_parser_node") {
 
   this->subscription = this->create_subscription<geometry_msgs::msg::Twist>(
       "cmd_vel", 10, std::bind(&VelParserNode::callback, this, _1));
+
+  this->cmd_timeout = std::chrono::duration<double>(
+      this->get_parameter("cmd_timeout").as_double());
+  this->watchdog_timer =
+      this->create_wall_timer(std::chrono::milliseconds(100),
+                              std::bind(&VelParserNode::watchdog, this));
+}
+
+// twist_mux goes silent (no zero) on /estop or when every input times out;
+// without this the last command would keep the wheels turning.
+void VelParserNode::watchdog() {
+  if (!this->stopped && std::chrono::steady_clock::now() - this->last_cmd_time >
+                            this->cmd_timeout) {
+    this->callback(std::make_shared<geometry_msgs::msg::Twist>());
+    this->stopped = true;
+  }
 }
 
 void VelParserNode::callback(const geometry_msgs::msg::Twist::SharedPtr msg) {
+  this->last_cmd_time = std::chrono::steady_clock::now();
+  this->stopped = false;
 
   auto motors_command = rover_msgs::msg::MotorsCommand();
 

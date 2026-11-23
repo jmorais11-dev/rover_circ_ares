@@ -34,7 +34,7 @@ controller_server:
 
       footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
         type: polygon
-        vertices: "[[0.3, 0.3], [0.3, -0.3], [-0.3, -0.3], [-0.3, 0.3]]"
+        vertices: "[[0.35, 0.3], [0.35, -0.3], [-0.35, -0.3], [-0.35, 0.3]]" # wheels reach x=+-0.343
 
       # GoalTolerance
       xy_goal_tolerance: 0.5

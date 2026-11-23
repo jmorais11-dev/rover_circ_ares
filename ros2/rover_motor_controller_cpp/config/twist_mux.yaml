@@ -1,0 +1,25 @@
+# Single arbiter in front of vel_parser_node: only twist_mux publishes /cmd_vel.
+# Higher priority wins; an input is dropped after `timeout` s without messages.
+twist_mux:
+  ros__parameters:
+    use_stamped: false # vel_parser_node and Nav2 (Jazzy) use plain Twist
+    topics:
+      navigation: # Nav2 after velocity_smoother + collision_monitor
+        topic: cmd_vel_nav_safe
+        timeout: 0.5
+        priority: 10
+      keyboard:
+        topic: cmd_vel_key
+        timeout: 0.5
+        priority: 90
+      joystick:
+        topic: cmd_vel_joy
+        timeout: 0.5
+        priority: 100
+    locks:
+      # std_msgs/Bool: true stops every input, false releases. Latched until
+      # someone publishes false (timeout 0 = no heartbeat required).
+      estop:
+        topic: estop
+        timeout: 0.0
+        priority: 255

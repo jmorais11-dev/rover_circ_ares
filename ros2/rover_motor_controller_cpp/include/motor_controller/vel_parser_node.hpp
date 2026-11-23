@@ -23,6 +23,8 @@
 #ifndef CONTROLLER_NODE_HPP
 #define CONTROLLER_NODE_HPP
 
+#include <chrono>
+
 #include "geometry_msgs/msg/twist.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -48,6 +50,12 @@ public:
   std::vector<float> calculate_target_tick(std::vector<float> target_angles);
 
 private:
+  void watchdog();
+
+  std::chrono::steady_clock::time_point last_cmd_time;
+  std::chrono::duration<double> cmd_timeout;
+  bool stopped = true;
+  rclcpp::TimerBase::SharedPtr watchdog_timer;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription;
   rclcpp::Publisher<rover_msgs::msg::MotorsCommand>::SharedPtr publisher;
   int speed_factor;

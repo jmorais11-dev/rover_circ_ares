@@ -13,6 +13,7 @@
   <test_depend>ament_cmake_gtest</test_depend>
   <depend>rover_msgs</depend>
   <depend>geometry_msgs</depend>
+  <exec_depend>twist_mux</exec_depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>

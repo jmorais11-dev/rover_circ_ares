@@ -67,6 +67,7 @@ def generate_launch_description():
                 executable="teleop_node",
                 name="teleop_twist_joy_node",
                 parameters=[config_filepath],
+                remappings=[("cmd_vel", "cmd_vel_joy")],  # input of twist_mux
             ),
         ]
     )

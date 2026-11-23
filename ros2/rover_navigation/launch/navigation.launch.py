@@ -55,6 +55,7 @@ def generate_launch_description():
         "bt_navigator",
         "waypoint_follower",
         "velocity_smoother",
+        "collision_monitor",
     ]
 
     # Map fully qualified names to relative ones so the node"s namespace can be prepended.
@@ -123,7 +124,9 @@ def generate_launch_description():
 
     cmd_vel_topic_cmd = DeclareLaunchArgument(
         "cmd_vel_topic",
-        default_value="/cmd_vel",
+        default_value="cmd_vel_nav",
+        # Nav2 never publishes /cmd_vel directly: cmd_vel_nav -> velocity_smoother
+        # -> collision_monitor -> cmd_vel_nav_safe -> twist_mux -> /cmd_vel
         description="cmd_vel topic (for remmaping)",
     )
 
@@ -218,6 +221,18 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
+                remappings=remappings,  # input cmd_vel -> cmd_vel_nav
+            ),
+            Node(
+                package="nav2_collision_monitor",
+                executable="collision_monitor",
+                name="collision_monitor",
+                # its yaml block has no use_sim_time key for RewrittenYaml to rewrite
+                output="screen",
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params, {"use_sim_time": use_sim_time}],
+                remappings=remappings,
             ),
         ],
     )
@@ -285,6 +300,15 @@ def generate_launch_description():
                 plugin="nav2_velocity_smoother::VelocitySmoother",
                 name="velocity_smoother",
                 parameters=[configured_params],
+                remappings=remappings,  # input cmd_vel -> cmd_vel_nav
+            ),
+            ComposableNode(
+                package="nav2_collision_monitor",
+                plugin="nav2_collision_monitor::CollisionMonitor",
+                name="collision_monitor",
+                # its yaml block has no use_sim_time key for RewrittenYaml to rewrite
+                parameters=[configured_params, {"use_sim_time": use_sim_time}],
+                remappings=remappings,
             ),
         ],
     )

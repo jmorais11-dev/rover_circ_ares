@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 
+import os
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
@@ -83,6 +85,22 @@ def generate_launch_description():
     # NODES
     #
 
+    # only twist_mux publishes /cmd_vel; see config/twist_mux.yaml
+    twist_mux_cmd = Node(
+        package="twist_mux",
+        executable="twist_mux",
+        output="log",
+        parameters=[
+            os.path.join(
+                get_package_share_directory("rover_motor_controller_cpp"),
+                "config",
+                "twist_mux.yaml",
+            ),
+            {"use_sim_time": False},
+        ],
+        remappings=[("cmd_vel_out", "cmd_vel")],
+    )
+
     vel_parser_node_cmd = Node(
         package=pkg_name,
         executable="vel_parser_node",
@@ -118,6 +136,7 @@ def generate_launch_description():
     ld.add_action(declare_baud_rate_cmd)
 
     ld.add_action(vel_parser_node_cmd)
+    ld.add_action(twist_mux_cmd)
     ld.add_action(controller_node_cmd)
 
     return ld
