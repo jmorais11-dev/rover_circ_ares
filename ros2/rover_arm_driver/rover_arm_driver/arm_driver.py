@@ -89,7 +89,8 @@ class ArmDriver(Node):
             )
         elif not valid(angles, self.lo, self.hi):
             self.get_logger().warn(
-                f"rejected arm command {angles}: need 6 angles in {self.lo}..{self.hi}"
+                f"rejected arm command {angles}: need 6 angles in {self.lo}..{self.hi}",
+                throttle_duration_sec=2.0,
             )
         else:
             self.target = angles
