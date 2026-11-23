@@ -12,4 +12,5 @@ jobs:
       - name: Black Formatter
         uses: lgeiger/black-action@master
         with:
-          args: ". --check --diff --line-length 90"
+          # rover_arm/ is vendored third-party code: keep it byte-identical to upstream
+          args: ". --check --diff --line-length 90 --extend-exclude /rover_arm/"
