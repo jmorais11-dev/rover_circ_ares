@@ -239,6 +239,19 @@ Based on [mgonzs13/ros2_rover](https://github.com/mgonzs13/ros2_rover), a ROS 2
 version of [Sawppy the Rover](https://github.com/Roger-random/Sawppy_Rover).
 MIT license.
 
+It also builds on:
+
+- [ruali-dev/vision-arm-grasp](https://github.com/ruali-dev/vision-arm-grasp):
+  the robotic arm firmware, vision and inverse kinematics, copied into
+  [`rover_arm/`](rover_arm/) (MIT).
+- [robotmcp/ros-mcp-server](https://github.com/robotmcp/ros-mcp-server/tree/develop):
+  the MCP server that lets AI models command the rover through rosbridge
+  (Apache-2.0).
+- [itsbharatj/ugv_ws](https://github.com/itsbharatj/ugv_ws) and the video
+  [GPT controlled ROBOT using ROS2 & Nav2](https://www.youtube.com/watch?v=KrqPC74tRCQ)
+  by [Bharat Jain](https://www.youtube.com/@BharatJain26): reference for
+  driving a ROS 2 / Nav2 rover with an LLM.
+
 Version `v0.7` of the upstream project was used in the paper *Comparison of
 Concentric Surface Planetary Explorations Using an Ackerman Rover in a Lunar
 Simulation* (iSpaRo 2024):
