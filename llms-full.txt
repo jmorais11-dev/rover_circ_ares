@@ -815,6 +815,78 @@ momento — o que foi decidido, o que quebrou e como foi corrigido. Ver também
 os [Comandos Essenciais](/comandos-essenciais-simulacao) para rodar o que
 está descrito aqui.
 
+## 2026-11-23 — Braço robótico: primeira ligação com o ROS
+
+**Em uma frase:** o braço agora pode ser comandado por um tópico do ROS, e o
+botão de parada `/estop` também vale para ele.
+
+### De onde vem o braço
+
+O código do braço vem do projeto aberto
+[vision-arm-grasp](https://github.com/ruali-dev/vision-arm-grasp), guardado
+na pasta `rover_arm/`. Ele tem 6 servos (base, ombro, cotovelo, giro da garra,
+punho e garra) ligados a um Arduino UNO. O Arduino recebe pelo cabo USB uma
+linha de texto com os 6 ângulos, de 0 a 180 graus, e move os servos na hora.
+O projeto original também tem a parte de câmera, que acha um objeto pela cor,
+e a conta que transforma "pegue em tal ponto" em ângulos. Essas duas partes
+ainda não entraram no ROS.
+
+### O que mudou
+
+Um programa novo, o `arm_driver` (pacote `ros2/rover_arm_driver`), faz a ponte:
+
+- Ele escuta o tópico `/arm/command`, que leva os 6 ângulos em graus, e manda
+  a linha para o Arduino.
+- Ele **recusa** comandos com número errado de ângulos ou fora dos limites de
+  cada junta. Isso importa porque, se faltar um ângulo, o Arduino manda aquele
+  servo para 0 grau, o que pode bater o braço. Os limites começam em 0 a 180
+  e devem ser medidos na bancada (parâmetros `min_angles` e `max_angles`).
+- **Movimento suave:** o Arduino pula direto para o ângulo que recebe. Por
+  isso o programa não manda o ângulo final de uma vez. Ele manda passos
+  pequenos, 25 vezes por segundo, até no máximo 30 graus por segundo
+  (parâmetro `max_speed`).
+- **Parada:** quando chega `/estop`, o braço congela onde está, mesmo no meio
+  de um movimento, e comandos novos são ignorados. Ao liberar, ele não retoma
+  o movimento antigo; espera um comando novo.
+- **Estacionar ao desligar:** ao fechar o programa, ele leva o braço devagar
+  até a pose inicial. Isso importa porque o Arduino reinicia toda vez que o
+  programa abre a porta, e ao reiniciar pula para essa pose. Se o braço já
+  estiver nela, não há tranco. Com `/estop` ativo, ele não se move nem para
+  estacionar.
+
+O pacote original em `rover_arm/` não foi alterado.
+
+### Como foi testado, sem o braço
+
+Um "Arduino de mentira" (uma porta serial virtual) recebeu o que o programa
+mandou:
+
+- Comandos fora do limite e com número errado de ângulos foram barrados.
+- A base foi de 90 a 60 graus em cerca de 1 s, de 1 a 2 graus por vez.
+- O `/estop` no meio de um movimento congelou o braço. Liberar o `/estop` não
+  retomou o movimento.
+- Fechar o programa no meio de um movimento (Ctrl+C ou `systemctl stop`)
+  levou o braço de volta à pose inicial em cerca de 1 s.
+
+### O que ainda falta
+
+- **Ligação elétrica segura (equipe):**
+  - os servos precisam de uma fonte própria de 5 V e 3 A, nunca do 5 V do
+    Arduino, e o GND precisa ser comum com o Arduino;
+  - esses 5 V devem passar pelo kill switch físico do rover. O `/estop` só
+    congela o braço; quem desliga de fato é o kill switch;
+  - sem energia, o braço cai pelo próprio peso. Deixe-o estacionado numa
+    posição apoiada.
+- **Primeiro teste real:** sem carga na garra, braço longe do rover e de
+  pessoas, alguém com a mão no kill switch, e medir os limites de cada junta.
+- **Tranco ao ligar:** se o braço for desligado fora da pose inicial (por
+  falta de energia, por exemplo), ele pula para ela quando o Arduino liga.
+- **Pegar por coordenada e câmera:** levar para o ROS a conta "ponto →
+  ângulos" e a detecção por cor. Isso depende de onde o braço e a câmera vão
+  ficar montados no rover.
+- **Porta USB fixa:** o programa usa `/dev/robotarm`. Falta uma regra udev
+  que dê esse nome ao Arduino do braço.
+
 ## 2026-11-19 — Segurança dos motores: o rover para sozinho quando algo dá errado
 
 **Em uma frase:** antes, se o computador do rover perdesse o contato com quem
