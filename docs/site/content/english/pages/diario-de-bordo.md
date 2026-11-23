@@ -152,6 +152,16 @@ mostrava:
 3. **O monitor de colisão procurava uma peça que não existe.** A
    configuração citava um ponto de referência chamado `base_footprint`, que o
    modelo deste rover não tem. O certo é `base_link`.
+4. **O rover do simulador era maior do que o real.** No teste com uma caixa
+   no caminho (feito em 23/11), o rover travava a uns 16 cm dela, mesmo com o
+   monitor ainda deixando passar velocidade. Ele estava batendo: as peças que
+   seguram as rodas de direção usavam como "casca de colisão" uma cópia da
+   caixa do corpo inteiro (43 × 29 cm). Com isso, o rover simulado tinha 1 m
+   de comprimento. A casca dessas peças agora é um cubo de 10 cm. Isso só
+   afeta a simulação.
+5. **O contorno usado pelo Nav2 era 4 cm curto.** As rodas vão até 34,3 cm à
+   frente e atrás do centro, e o contorno (`footprint`) parava em 30 cm. Ele
+   passou para 35 cm. Isso vale também para o rover real.
 
 ### Resultado na simulação
 
@@ -161,12 +171,13 @@ mostrava:
   liberado.
 - Um objetivo de 2 m do piloto automático andou, parou no `/estop` e chegou
   ao destino depois de liberado.
+- **Freio por obstáculo:** com uma caixa 2 m à frente e ordem de 0,3 m/s, o
+  monitor de colisão reduziu a velocidade aos poucos (0,3 → 0,1 → 0,05 →
+  0,025 m/s) e parou o rover com as rodas a cerca de 5 cm da caixa. Ele ficou
+  parado até o fim do teste.
 
 ### O que ainda falta
 
-- **Testar o freio por obstáculo:** ver o monitor de colisão parar o rover
-  diante de um obstáculo de verdade. Até agora só foi confirmado que ele
-  recebe o lidar e deixa passar a velocidade.
 - **Testar o joystick físico** no rover real.
 - **Reconstruir a imagem Docker da equipe:** o `twist_mux` é um pacote novo.
 - **Expor o `/estop` à IA e ao chat** (passo F3). Hoje ele só pode ser
